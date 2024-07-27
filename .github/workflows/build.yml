@@ -1,5 +1,22 @@
-on: [push, pull_request, workflow_dispatch]
+name: Build Firmware
+
+on: [push, pull_request]
 
 jobs:
   build:
-    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@main
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        board: [nice_nano_v2]
+        shield: [corne_left, corne_right]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Zephyr
+        uses: zephyrproject-rtos/zephyr-build-action@v1
+      - name: Build firmware
+        run: west build -s zmk/app -d build/${{ matrix.board }}-${{ matrix.shield }} -b ${{ matrix.board }} -- -DSHIELD=${{ matrix.shield }} -DZMK_CONFIG=config
+      - name: Upload firmware
+        uses: actions/upload-artifact@v2
+        with:
+          name: firmware-${{ matrix.board }}-${{ matrix.shield }}
+          path: build/${{ matrix.board }}-${{ matrix.shield }}/zephyr/zmk.uf2
