@@ -1,0 +1,23 @@
+// config/boards/shields/corne_right/overlay.dts
+/dts-v1/;
+
+/ {
+    chosen {
+        zmk,display = &ssd1306;
+    };
+
+    &spi1 {
+        status = "okay";
+        ssd1306: ssd1306@0 {
+            compatible = "solomon,ssd1306fb-spi";
+            reg = <0>;
+            spi-max-frequency = <8000000>;
+            label = "SSD1306";
+            cs-gpios = <&gpio0 10 GPIO_ACTIVE_LOW>;
+            dc-gpios = <&gpio0 9 GPIO_ACTIVE_LOW>;
+            reset-gpios = <&gpio0 8 GPIO_ACTIVE_LOW>;
+            width = <128>;
+            height = <32>;
+        };
+    };
+};
